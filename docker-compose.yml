@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+  # uncomment once frontend examples are added
+  # web:
+  #   image: nginx
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./frontend/html:/usr/share/nginx/html
+  #     - ./frontend/static:/opt/app/static
+  #     - ./conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
+  #   depends_on:
+  #     - api
+  api:
+    # TODO: switch to generating compose from nix and
+    # then we can add proper tagging and not rely on "latest"
+    image: denibertovic/nuts-and-bolts/api
+    command: /bin/bash -c "api"
+    depends_on:
+      - postgres
+    environment:
+      - LOCAL_USER_ID=${LOCAL_USER_ID}
+      - ENV=Development
+    ports:
+      - 8000:8000
+  postgres:
+    image: postgres:11.2
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./conf/postgres/entrypoints:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+volumes:
+  postgres-data: {}
+

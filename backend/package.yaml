@@ -1,0 +1,101 @@
+name:                backend
+version:             0.1.0.0
+github:              "denibertovic/nuts-and-bolts"
+license:             GPL-3.0
+author:              "Deni Bertovic"
+maintainer:          "deni@denibertovic.com"
+copyright:           "2019 Deni Bertovic"
+
+# extra-source-files:
+# - README.md
+# - ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/denibertovic/nuts-and-bolts#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- aeson
+- bytestring
+- unordered-containers
+- either
+- http-media
+- http-types
+- lens
+- lens-aeson
+- mtl
+- cases
+- monad-logger
+- persistent
+- persistent-postgresql
+- persistent-postgresql-json
+- persistent-template
+- servant
+- servant-docs
+- servant-server
+- servant-auth
+- servant-auth-server
+- text
+- time
+- transformers
+- uuid
+- wai
+- pwstore-fast
+- jose
+- wai-extra
+- warp
+- purescript-bridge
+
+library:
+  source-dirs: src
+
+executables:
+  api:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - backend
+    - aeson
+    - bytestring
+    - retry
+    - mtl
+    - extra
+    - text
+    - warp
+    - persistent-postgresql
+    - servant-auth-server
+  print-migrations:
+    main: Main.hs
+    source-dirs:
+      - app/print-migrations
+    ghc-options: -threaded -rtsopts -with-rtsopts=-N
+    dependencies:
+      - backend
+  generate-frontend-types:
+    main: Main.hs
+    source-dirs:
+      - app/generate-frontend-types
+    ghc-options: -threaded -rtsopts -with-rtsopts=-N
+    dependencies:
+      - backend
+
+tests:
+  api-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - backend
