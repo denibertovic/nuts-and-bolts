@@ -27,7 +27,8 @@ import           Network.Wai                 (Application)
 import           Servant
 import           Servant.Auth.Server
 import           Servant.Server.Internal.ServerError (ServerError)
-
+import           Servant.HTML.Lucid (HTML)
+import           Lucid (Html)
 -- import           Database.Esqueleto
 import           Data.Typeable               (Typeable)
 import           Nuts.Bolts.Config        (Config (..))
@@ -53,7 +54,7 @@ type UnprotectedAPI = "login" :> ReqBody '[JSON] Login
                     :<|> "register" :> QueryParam "code" String
                                     :> ReqBody '[JSON] Account
                                     :> Post '[JSON] Int64
-                    :<|> Get '[JSON] String
+                    :<|> Get '[HTML] (Html ())
 
 
 type NutsBoltsAPI auths = (Auth auths AuthUser :> "accounts" :> AccountAPI)

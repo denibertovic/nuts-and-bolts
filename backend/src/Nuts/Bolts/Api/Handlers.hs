@@ -33,6 +33,7 @@ import           GHC.Generics                     (Generic)
 import           Network.Wai                      (Application)
 import           Servant
 import           Servant.Auth.Server
+import           Lucid (Html, h2_)
 
 -- import           Database.Esqueleto
 import           Data.Typeable                    (Typeable)
@@ -86,8 +87,11 @@ ping (Authenticated au) = return NoContent
 ping _                  = throwError err401
 
 -- echo Handlers
-hello :: CookieSettings -> JWTSettings -> AppM String
-hello _ _ = return "Hi."
+hello :: CookieSettings -> JWTSettings -> AppM (Html ())
+hello _ _ = return html
+  where html :: Html ()
+        html = do
+          h2_ "Hi."
 
 -- Account handlers
 

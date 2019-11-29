@@ -51,6 +51,8 @@ dependencies:
 - wai-extra
 - warp
 - purescript-bridge
+- lucid
+- servant-lucid
 
 library:
   source-dirs: src
