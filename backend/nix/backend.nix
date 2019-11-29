@@ -21,7 +21,7 @@ in
 mkDerivation {
   pname = "backend";
   version = "0.1.0.0";
-  src = ../.;
+  src = gitignoreSource ../.;
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [
