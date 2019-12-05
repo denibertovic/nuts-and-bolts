@@ -40,15 +40,13 @@ let
     # But more importantly, prod credentials shouldn't be baked in so we're likely
     # need to handle both cases. I'll change this in the future.
     mkdir -p $APP_DIR/keys
-    echo ${dev_jwk} > /opt/app/keys/jwk_dev_key.json
+    cp ${.keys/jwk_dev_key.json} /opt/app/keys/jwk_dev_key.json
 
     # set correct permissions on APP_DIR and subfolders
     chown -R user. $APP_DIR
 
     exec pid1 -u user -g user "$@"
   '';
-
-  dev_jwk = builtins.readFile ./keys/jwk_dev_key.json;
 
   config = {
     packageOverrides = pkgs: rec {
