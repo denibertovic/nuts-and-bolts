@@ -1,4 +1,4 @@
-.PHONY: doc rm-pg-volume db-shell backend-build backend-nix-shell backend-docker-image
+.PHONY: doc rm-pg-volume db-shell build-backend nix-shell build-backend-docker-image
 DEFAULT_GOAL: help
 
 export LOCAL_USER_ID ?= $(shell id -u $$USER)
@@ -9,17 +9,17 @@ IMAGE_NAME=denibertovic/nuts-and-bolts/api
 progress=auto
 
 ## Build backend with nix
-backend-build:
-	@cd backend && nix-build --attr backend release.nix $(builders)
+build-backend:
+	@nix-build --attr backend release.nix $(builders)
 
 ## Build docker image for backend with nix
-backend-docker-image:
-	@cd backend && nix-build --attr backend-docker-image release.nix
-	@cd backend && docker load < ./result
+build-backend-docker-image:
+	@nix-build --attr backend-docker-image release.nix
+	@docker load < ./result
 
 ## Enter backend nix-shell
-backend-nix-shell:
-	@cd backend && nix-shell
+nix-shell:
+	@nix-shell
 
 ## Run local dev env
 dev:
@@ -58,11 +58,10 @@ db-shell:
 psql:
 	@docker exec -e COLUMNS="`tput cols`" -e LINES="`tput lines`" -it $$(docker-compose ps -q postgres) /bin/bash -c "psql -Upostgres"
 
-
 ## Show help screen.
 help:
 	@echo "Please use \`make <target>' where <target> is one of\n\n"
-	@awk '/^[a-zA-Z\-\_0-9]+:/ { \
+	@awk '/^[a-zA-Z\-0-9_]+:/ { \
 		helpMessage = match(lastLine, /^## (.*)/); \
 		if (helpMessage) { \
 			helpCommand = substr($$1, 0, index($$1, ":")-1); \

@@ -40,7 +40,7 @@ let
     # But more importantly, prod credentials shouldn't be baked in so we're likely
     # need to handle both cases. I'll change this in the future.
     mkdir -p $APP_DIR/keys
-    cp ${.keys/jwk_dev_key.json} /opt/app/keys/jwk_dev_key.json
+    cp ${./backend/keys/jwk_dev_key.json} /opt/app/keys/jwk_dev_key.json
 
     # set correct permissions on APP_DIR and subfolders
     chown -R user. $APP_DIR
