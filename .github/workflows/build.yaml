@@ -26,6 +26,5 @@ jobs:
         # Only needed for private caches
         #authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - run: nix-build --attr backend-docker-image release.nix
-    - run: nix-shell --run "echo OK"
     - run: docker load < ./result
     - run: docker push denibertovic/nuts-and-bolts:latest
