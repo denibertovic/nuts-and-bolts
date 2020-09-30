@@ -4,7 +4,8 @@ DEFAULT_GOAL: help
 export LOCAL_USER_ID ?= $(shell id -u $$USER)
 
 # Gitlab docker image repository supports nesting names
-IMAGE_NAME=denibertovic/nuts-and-bolts/api
+# but docker hub does not
+IMAGE_NAME=denibertovic/nuts-and-bolts
 
 progress=auto
 

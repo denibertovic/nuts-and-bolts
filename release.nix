@@ -52,7 +52,7 @@ let
     packageOverrides = pkgs: rec {
 
       backend-docker-image = pkgs.dockerTools.buildLayeredImage {
-        name = "denibertovic/nuts-and-bolts/api";
+        name = "denibertovic/nuts-and-bolts";
         tag = "latest";
         # tag = "${haskellPackages.backend.version}";
         # We can remove some of these packages if we don't end up needing them
