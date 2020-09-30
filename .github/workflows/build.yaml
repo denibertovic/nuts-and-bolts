@@ -5,6 +5,8 @@ on:
 jobs:
   build-and-push-docker-image:
     runs-on: ubuntu-latest
+    env:
+      SHORT_SHA: ${GITHUB_SHA:7}
     steps:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
@@ -27,6 +29,6 @@ jobs:
         #authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - run: nix-build --attr backend-docker-image release.nix
     - run: docker load < ./result
-    - run: docker tag $GITHUB_REPOSITORY:latest $GITHUB_REPOSITORY:$GITHUB_SHA
+    - run: docker tag $GITHUB_REPOSITORY:latest $GITHUB_REPOSITORY:$SHORT_SHA
     - run: docker push $GITHUB_REPOSITORY:latest
-    - run: docker push $GITHUB_REPOSITORY:$GITHUB_SHA
+    - run: docker push $GITHUB_REPOSITORY:$SHORT_SHA
