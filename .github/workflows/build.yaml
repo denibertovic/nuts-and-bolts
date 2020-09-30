@@ -25,8 +25,9 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
         # Only needed for private caches
         #authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+    - run: echo "::set-env name=SHORT_SHA::$(git rev-parse --short HEAD)"
     - run: nix-build --attr backend-docker-image release.nix
     - run: docker load < ./result
-    - run: docker tag $GITHUB_REPOSITORY:latest $GITHUB_REPOSITORY:$GITHUB_SHA
+    - run: docker tag $GITHUB_REPOSITORY:latest $GITHUB_REPOSITORY:$SHORT_SHA
     - run: docker push $GITHUB_REPOSITORY:latest
-    - run: docker push $GITHUB_REPOSITORY:$GITHUB_SHA
+    - run: docker push $GITHUB_REPOSITORY:$SHORT_SHA
