@@ -15,7 +15,7 @@ services:
   api:
     # TODO: switch to generating compose from nix and
     # then we can add proper tagging and not rely on "latest"
-    image: denibertovic/nuts-and-bolts/api
+    image: denibertovic/nuts-and-bolts
     command: /bin/bash -c "api"
     depends_on:
       - postgres
