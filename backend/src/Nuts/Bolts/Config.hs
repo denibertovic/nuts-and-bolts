@@ -6,8 +6,12 @@ module Nuts.Bolts.Config where
 import           Control.Monad.Logger                 (runNoLoggingT,
                                                        runStdoutLoggingT)
 import           Network.Wai                          (Middleware)
+import qualified Data.Text.Encoding as TE
+import           Data.Text (Text)
+import qualified Data.Text as T
 import           Network.Wai.Middleware.RequestLogger (logStdout, logStdoutDev)
 import           System.IO                            (FilePath)
+import qualified Data.HashMap.Strict as HM
 
 import           Database.Persist.Postgresql          (ConnectionPool,
                                                        ConnectionString,
@@ -15,9 +19,10 @@ import           Database.Persist.Postgresql          (ConnectionPool,
 
 
 data Config = Config
-    { getPool :: ConnectionPool
-    , getEnv  :: Environment
-    , getJWK  :: Environment -> FilePath
+    { connPool :: ConnectionPool
+    , environment  :: Environment
+    , jwkPath  :: FilePath
+    , appPort :: Int
     }
 
 data Environment =
@@ -26,34 +31,40 @@ data Environment =
   | Production
   deriving (Eq, Show, Read)
 
-defaultConfig :: Config
-defaultConfig = Config
-    { getPool = undefined
-    , getEnv  = Development
-    , getJWK = defaultJWK
-    }
+mkConfig :: [(String, String)] -> IO Config
+mkConfig env = do
+  pool <- makePool getEnv dbUrl
+  return $ Config { connPool = pool
+             , environment = getEnv
+             , jwkPath = T.unpack $ required "JWK_PATH" hm
+             , appPort = requiredDefault 8000 "APP_PORT" hm
+             }
+    where hm = HM.fromList env
+          getEnv = requiredDefault Development "ENV" hm
+          dbUrl = TE.encodeUtf8 $ required "DATABASE_URL" hm
 
+notRequired :: Text -> HM.HashMap String String -> Maybe Text
+notRequired q env = T.pack <$> HM.lookup (T.unpack q) env
 
-defaultJWK :: Environment -> FilePath
-defaultJWK Test        = "keys/jwk_dev_key.json"
-defaultJWK Development = "keys/jwk_dev_key.json"
-defaultJWK Production  = "keys/jwk_prod_key.json"
+required :: Text -> HM.HashMap String String -> Text
+required q env = case HM.lookup (T.unpack q) env of
+  Nothing -> error $ "Error. Missing config environment variable: " <> (T.unpack q)
+  Just x -> T.pack x
+
+requiredDefault :: Read a => a -> Text -> HM.HashMap String String -> a
+requiredDefault def q env = case HM.lookup (T.unpack q) env of
+  Nothing -> def
+  Just x -> read x
 
 setLogger :: Environment -> Middleware
 setLogger Test        = id
 setLogger Development = logStdoutDev
 setLogger Production  = logStdout
 
-makePool :: Environment -> IO ConnectionPool
-makePool Test = runNoLoggingT $ createPostgresqlPool (connStr Test) (envPool Test)
-makePool e = runStdoutLoggingT $ createPostgresqlPool (connStr e) (envPool e)
+makePool :: Environment -> ConnectionString -> IO ConnectionPool
+makePool e connStr = runStdoutLoggingT $ createPostgresqlPool connStr (envPool e)
 
 envPool :: Environment -> Int
 envPool Test        = 1
 envPool Development = 1
 envPool Production  = 8
-
-connStr :: Environment -> ConnectionString
-connStr Test = "host=localhost dbname=postgres user=postgres password=postgres port=5432"
-connStr Development = "host=postgres dbname=postgres user=postgres password=postgres port=5432"
-connStr Production = "host=postgres dbname=postgres user=postgres password=postgres port=5432"

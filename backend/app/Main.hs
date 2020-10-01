@@ -4,8 +4,13 @@
 module Main where
 
 import Database.Persist.Postgresql (runSqlPool)
-import Network.Wai.Handler.Warp (run)
-import System.Environment (getArgs, lookupEnv)
+import Network.Wai.Handler.Warp
+  ( defaultSettings,
+    runSettings,
+    setOnException,
+    setPort,
+  )
+import System.Environment (getArgs, lookupEnv, getEnvironment)
 
 import Control.Concurrent (threadDelay)
 import Control.Exception (SomeException, catch)
@@ -19,7 +24,7 @@ import Data.Maybe (fromJust)
 import Servant.Auth.Server
 
 import Nuts.Bolts.Api (app)
-import Nuts.Bolts.Config (Config(..), Environment(..), defaultConfig, makePool, setLogger)
+import Nuts.Bolts.Config (Config(..), Environment(..), mkConfig, setLogger)
 import Nuts.Bolts.Models
 import Nuts.Bolts.Utils (lookupSetting)
 
@@ -33,16 +38,16 @@ main = do
 
 inner :: IO ()
 inner = do
-  env <- lookupSetting "ENV" Development
-  port <- lookupSetting "PORT" 8000
-  pool <- makePool env
-  let cfg = defaultConfig {getPool = pool, getEnv = env}
-  keyC <- BSL.readFile (getJWK cfg $ env)
+  env <- getEnvironment
+  config <- mkConfig env
+  keyC <- BSL.readFile (jwkPath config)
   let myKey = decode keyC :: Maybe JWK
   let jwtCfg = defaultJWTSettings (fromJust myKey)
-      logger = setLogger env
-  retry 5 $ retryDbConnection $ runSqlPool doMigrations pool
-  run port $ logger $ app cfg defaultCookieSettings jwtCfg
+      logger = setLogger (environment config)
+  retry 5 $ retryDbConnection $ runSqlPool doMigrations (connPool config)
+  let settings = setPort (appPort config) $
+                 defaultSettings
+  runSettings settings $ logger $ app config defaultCookieSettings jwtCfg
 
 retryDbConnection :: IO a -> IO a
 retryDbConnection action =

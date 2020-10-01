@@ -19,9 +19,10 @@ services:
     command: /bin/bash -c "api"
     depends_on:
       - postgres
+    # Change to .env that's not commited to the repo
+    env_file: env.sample
     environment:
       - LOCAL_USER_ID=${LOCAL_USER_ID}
-      - ENV=Development
     ports:
       - 8000:8000
   postgres:

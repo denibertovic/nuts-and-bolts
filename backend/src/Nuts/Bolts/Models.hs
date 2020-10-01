@@ -81,5 +81,5 @@ runDb :: (MonadIO m,
     Control.Monad.Reader.Class.MonadReader Config m) =>
     ReaderT SqlBackend IO b -> m b
 runDb query = do
-    pool <- asks getPool
+    pool <- asks connPool
     liftIO $ runSqlPool query pool

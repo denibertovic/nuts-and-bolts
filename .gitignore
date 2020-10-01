@@ -18,3 +18,4 @@ backend/dist
 backend/dist-newstyle
 backend/.ghc.environment*
 result
+/.env
