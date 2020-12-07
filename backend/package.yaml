@@ -53,6 +53,7 @@ dependencies:
 - purescript-bridge
 - lucid
 - servant-lucid
+- hostname
 
 library:
   source-dirs: src

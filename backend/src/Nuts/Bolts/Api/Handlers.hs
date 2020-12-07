@@ -2,6 +2,7 @@
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE GADTs               #-}
 {-# LANGUAGE OverloadedStrings   #-}
+{-# LANGUAGE ExtendedDefaultRules #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators       #-}
 
@@ -33,7 +34,8 @@ import           GHC.Generics                     (Generic)
 import           Network.Wai                      (Application)
 import           Servant
 import           Servant.Auth.Server
-import           Lucid (Html, h2_)
+import           Lucid (Html, h2_, toHtml)
+import           Network.HostName (getHostName)
 
 -- import           Database.Esqueleto
 import           Data.Typeable                    (Typeable)
@@ -92,6 +94,16 @@ hello _ _ = return html
   where html :: Html ()
         html = do
           h2_ "Hi."
+
+-- useful for demoing load balancing across pods in k8s
+whoami :: CookieSettings -> JWTSettings -> AppM (Html ())
+whoami _ _ = do
+    hostname <- liftIO $ getHostName
+    let txt = ("Hi from: " <> hostname <> ".")
+    return $ html txt
+  where html :: String -> Html ()
+        html txt = do
+          h2_ $ toHtml txt
 
 -- Account handlers
 

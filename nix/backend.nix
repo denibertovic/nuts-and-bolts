@@ -1,6 +1,6 @@
 { mkDerivation, fetchFromGitHub, aeson, base, bytestring, cases, either, extra
-, hpack, http-media, http-types, jose, lens, lens-aeson, lucid
-, monad-logger, mtl, persistent, persistent-postgresql
+, hostname, hpack, http-media, http-types, jose, lens, lens-aeson
+, lucid, monad-logger, mtl, persistent, persistent-postgresql
 , persistent-postgresql-json, persistent-template
 , purescript-bridge, pwstore-fast, retry, servant, servant-auth
 , servant-auth-server, servant-docs, servant-lucid, servant-server
@@ -43,12 +43,13 @@ mkDerivation {
     wai-extra warp
   ];
   testHaskellDepends = [
-    aeson base bytestring cases either http-media http-types jose lens
-    lens-aeson lucid monad-logger mtl persistent persistent-postgresql
-    persistent-postgresql-json persistent-template purescript-bridge
-    pwstore-fast servant servant-auth servant-auth-server servant-docs
-    servant-lucid servant-server text time transformers
-    unordered-containers uuid wai wai-extra warp
+    aeson base bytestring cases either hostname http-media http-types
+    jose lens lens-aeson lucid monad-logger mtl persistent
+    persistent-postgresql persistent-postgresql-json
+    persistent-template purescript-bridge pwstore-fast servant
+    servant-auth servant-auth-server servant-docs servant-lucid
+    servant-server text time transformers unordered-containers uuid wai
+    wai-extra warp
   ];
   doHaddock = false;
   enableSharedExecutables = false;

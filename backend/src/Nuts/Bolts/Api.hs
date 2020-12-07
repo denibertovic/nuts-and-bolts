@@ -74,7 +74,7 @@ accountServer au = listAccounts au
               :<|> updateAccountPassword au
 
 unprotectedServer :: CookieSettings -> JWTSettings -> ServerT UnprotectedAPI AppM
-unprotectedServer cs jwts = loginUser cs jwts :<|> registerNewAccount cs jwts :<|> hello cs jwts
+unprotectedServer cs jwts = loginUser cs jwts :<|> registerNewAccount cs jwts :<|> whoami cs jwts :<|> hello cs jwts
 
 nutsBoltsServer :: CookieSettings -> JWTSettings -> ServerT (NutsBoltsAPI auths) AppM
 nutsBoltsServer cs jwts = accountServer :<|> pingServer :<|> unprotectedServer cs jwts

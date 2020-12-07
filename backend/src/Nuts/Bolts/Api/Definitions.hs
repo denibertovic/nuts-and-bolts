@@ -54,6 +54,7 @@ type UnprotectedAPI = "login" :> ReqBody '[JSON] Login
                     :<|> "register" :> QueryParam "code" String
                                     :> ReqBody '[JSON] Account
                                     :> Post '[JSON] Int64
+                    :<|> "who-are-you" :> Get '[HTML] (Html ())
                     :<|> Get '[HTML] (Html ())
 
 
