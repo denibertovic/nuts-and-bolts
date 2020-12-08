@@ -24,10 +24,8 @@ jobs:
         nix_path: nixpkgs=channel:nixos-19.09
     - uses: cachix/cachix-action@v6
       with:
-        name: deni
-        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
-        # Only needed for private caches
-        #authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+        name: nuts-and-bolts
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - run: echo "::set-env name=SHORT_SHA::$(git rev-parse --short HEAD)"
     - name: Build docker image with Nix
       run: nix-build --attr backend-docker-image release.nix
